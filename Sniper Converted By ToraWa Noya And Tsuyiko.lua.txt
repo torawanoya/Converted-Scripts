@@ -14,8 +14,6 @@ game.ReplicatedStorage["01_server"]:FireServer("cmd", "-gh 108408201857187")
 wait(1.5)
 game.ReplicatedStorage["01_server"]:FireServer("cmd", "-net")
 wait(1.5)
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Gelatekussy/GelatekHub/main/src/lib/Reanimate.lua"))()
-
 local Global = (getgenv and getgenv()) or shared
 if game:GetService("Players").LocalPlayer.Character.Name ~= "GelatekReanimate" then
 	error("Not Reanimated")
