@@ -259,7 +259,6 @@ local function setupCharacter(character)
 end
 
 setupCharacter(plr.Character or plr.CharacterAdded:Wait())
-plr.CharacterAdded:Connect(setupCharacter)
 
 stepped:Connect(function()
 	if not (char and char.Parent and hum and rut and t and h) then return end
