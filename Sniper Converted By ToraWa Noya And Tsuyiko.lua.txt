@@ -10,8 +10,8 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 
 game.ReplicatedStorage["01_server"]:FireServer("cmd", "-r6")
 wait(2)
-game.ReplicatedStorage["01_server"]:FireServer("cmd", "-gh 108408201857187")
-wait(1.5)
+game.ReplicatedStorage["01_server"]:FireServer("cmd", "-gh 108408201857187 2649326901")
+wait(2.5)
 game.ReplicatedStorage["01_server"]:FireServer("cmd", "-net")
 wait(1.5)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/oldhacfard/The-script/refs/heads/main/Reanimate.luau"))()
@@ -173,13 +173,27 @@ GunMesh.Massless = true
 GunMeshweld = CreateWeld(m, FakeHandle, GunMesh, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1))
 MeshCalibration = CFrame.Angles(math.rad(0), math.rad(0), math.rad(0))
 Barrel = CreatePart(Enum.FormFactor.Custom, m, Enum.Material.SmoothPlastic, 0, 1, "Smoky grey", "Barrel", Vector3.new(0.324199915, 0.200000003, 0.216133296))
-Barrelweld = CreateWeld(m, FakeHandle, Barrel, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), CFrame.new(-0.000385284424, 5.45991993, 0.648399353, 1.88395493e-016, 1.00281931e-024, -1, 0.999999642, 0, 4.37113812e-008, 0, -0.999999642, -4.73655636e-016))
+BarrelOffset = CFrame.new(0.075, -0.15, 3.15) * CFrame.Angles(math.rad(0), math.rad(0), math.rad(0))
+Barrelweld = CreateWeld(m, FakeHandle, Barrel, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), BarrelOffset)
 MagHandle = CreatePart(Enum.FormFactor.Custom, m, Enum.Material.SmoothPlastic, 0, 1, "Really black", "MagHandle", Vector3.new(0.432266504, 0.324199826, 0.216133296))
 MagHandleweld = CreateWeld(m, FakeHandle, MagHandle, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), CFrame.new(0.648423195, -0.0540428162, 0.000385284424, 0.999999642, 0, 4.37113812e-008, 0, 0.999999642, 4.73655636e-016, 0, -0, 1))
 BoltHandle = CreatePart(Enum.FormFactor.Custom, m, Enum.Material.SmoothPlastic, 0, 1, "Really black", "BoltHandle", Vector3.new(0.216133282, 1.40486586, 0.216133267))
 BoltHandleweld = CreateWeld(m, FakeHandle, BoltHandle, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), CFrame.new(0.540328979, -0.486276627, -0.000385284424, -4.47034729e-008, -0.999999583, -2.42770696e-015, -0.999999642, 0, -4.37113812e-008, 0, 0, -0.99999994))
 ScopeZoom = CreatePart(Enum.FormFactor.Custom, m, Enum.Material.SmoothPlastic, 0, 1, "Bright violet", "ScopeZoom", Vector3.new(0.216133296, 0.200000003, 0.200000003))
 ScopeZoomweld = CreateWeld(m, FakeHandle, ScopeZoom, CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), CFrame.new(1.72752714, -1.03763962, 0, 0.999999642, 0, 4.37113812e-008, 0, 0.999999642, 4.73655636e-016, 4.37113812e-008, 4.73655636e-016, 1))
+
+local BulletAccessory = Char:FindFirstChild("PartAccessory")
+BulletPart = BulletAccessory.Handle
+for _, joint in pairs(Char:GetDescendants()) do
+	if (joint:IsA("Weld") or joint:IsA("Motor6D") or joint:IsA("WeldConstraint") or joint:IsA("ManualWeld")) and (joint.Part0 == BulletPart or joint.Part1 == BulletPart) then
+		joint:Destroy()
+	end
+end
+BulletPart.Anchored = true
+BulletPart.CanCollide = false
+BulletPart.Massless = true
+BulletTraveling = false
+BulletPart.CFrame = RP.CFrame * CFrame.new(0, -200, 0)
 
 local PE1 = Create("ParticleEmitter"){
 	Parent = Barrel,
@@ -232,6 +246,8 @@ function Shoot(asd, spread1, spread2)
 	if Ammo == 0 then
 		Depleted = true
 	end
+	BulletTraveling = true
+	BulletPart.CFrame = CFrame.new(MainPos)
 	coroutine.resume(coroutine.create(function(Spreaded) 
 		repeat
 			wait()
@@ -240,9 +256,11 @@ function Shoot(asd, spread1, spread2)
 			local mag = (MainPos - pos).magnitude 
 			CylinderEffect(BrickColor.new("Dark stone grey"), CFrame.new((MainPos + pos) / 2, pos) * CFrame.Angles(1.57, 0, 0), 3, mag * 5, 3, .5, 1, .5, 0.2)
 			MainPos = MainPos + (MouseLook.lookVector * 50)
+			BulletPart.CFrame = CFrame.new(MainPos, MainPos + MouseLook.lookVector)
 			num = num - 1
 			if hit ~= nil then
 				num = 0
+				BulletPart.CFrame = CFrame.new(pos)
 				local ref = CreatePart(3, workspace, "Neon", 0, 1, BrickColor.new("Dark stone grey"), "Reference", Vector3.new())
 				ref.Anchored = true
 				ref.CFrame = CFrame.new(pos)
@@ -250,6 +268,7 @@ function Shoot(asd, spread1, spread2)
 				game:GetService("Debris"):AddItem(ref, 1) 
 			end
 		until num <= 0
+		BulletTraveling = false
 	end))
 end
 local Aiming = false
@@ -540,13 +559,13 @@ function Reload()
 	attack = false
 end
 
-mouse.Button1Down:connect(function()
+local FireConn = mouse.Button1Down:connect(function()
 	if attack == false and Depleted == false then
 		Fire()
 	end
 end)
 
-mouse.KeyDown:connect(function(k)
+local KeyConn = mouse.KeyDown:connect(function(k)
 	k = k:lower()
 	if k == "r" and attack == false then
 		Reload()
@@ -588,12 +607,30 @@ local sine = 0
 local change = 1
 local val = 0
 
+local Ended = false
+
+Hu.Died:Connect(function()
+	Ended = true
+	pcall(function() FireConn:Disconnect() end)
+	pcall(function() KeyConn:Disconnect() end)
+	pcall(function() gyro:Destroy() end)
+	pcall(function() m:Destroy() end)
+	Effects = {}
+	Ammo = 0
+end)
+
 while true do
 	wait()
+	if Ended == true then
+		break
+	end
 	if Aiming == false then
 		GunMeshOffset = CFrame.new(-1, 0.5, 0.5) * CFrame.Angles(math.rad(-25), math.rad(110), math.rad(25))
 	else
 		GunMeshOffset = CFrame.new(-1, 0.3, -0.3) * CFrame.Angles(math.rad(0), math.rad(90), math.rad(0))
+	end
+	if BulletTraveling == false then
+		BulletPart.CFrame = RP.CFrame * CFrame.new(0, -200, 0)
 	end
 	sine = sine + change
 	local torvel = (RP.Velocity * Vector3.new(1, 0, 1)).magnitude 
