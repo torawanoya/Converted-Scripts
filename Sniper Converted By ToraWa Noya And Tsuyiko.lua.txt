@@ -609,15 +609,35 @@ local val = 0
 
 local Ended = false
 
-Hu.Died:Connect(function()
+local DiedConn
+local CharAddedConn
+
+local function Cleanup()
 	Ended = true
 	pcall(function() FireConn:Disconnect() end)
 	pcall(function() KeyConn:Disconnect() end)
+	pcall(function() DiedConn:Disconnect() end)
+	pcall(function() CharAddedConn:Disconnect() end)
+	pcall(function() gyro.Parent = nil end)
 	pcall(function() gyro:Destroy() end)
 	pcall(function() m:Destroy() end)
+	pcall(function() BulletPart:Destroy() end)
+	pcall(function()
+		cam.FieldOfView = 70
+		cam.CameraSubject = workspace.CurrentCamera.CameraSubject
+		Ply.CameraMode = Enum.CameraMode.Classic
+		mouse.Icon = ""
+	end)
+	Aiming = false
+	Crouching = false
+	Zoomed = false
+	attack = false
 	Effects = {}
 	Ammo = 0
-end)
+end
+
+DiedConn = Hu.Died:Connect(Cleanup)
+CharAddedConn = Ply.CharacterAdded:Connect(Cleanup)
 
 while true do
 	wait()
