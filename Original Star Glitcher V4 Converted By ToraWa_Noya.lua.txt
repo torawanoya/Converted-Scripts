@@ -11,6 +11,10 @@ Used Python To Convert RBXM File > LuaU (lz4 Library)]]
 
 print("ToraWa Noya was here")
 
+game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-rs"}))
+
+wait(1.5)
+
 if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
     game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-r6"}))
     wait(1.5)
