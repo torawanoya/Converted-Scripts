@@ -13,7 +13,7 @@ print("ToraWa Noya was here")
 
 game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-rs"}))
 
-wait(1.5)
+wait(2)
 
 if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
     game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-r6"}))
