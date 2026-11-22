@@ -23,6 +23,8 @@ else
     game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-net"}))
 end
 
+task.wait(0.2)
+
 local Vector3_101 = Vector3.new(1, 0, 1)
 local netless_Y = Vector3.new(0, 25.1, 0)
 local function getNetlessVelocity(realPartVelocity)
