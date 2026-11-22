@@ -11,9 +11,11 @@ Used Python To Convert RBXM File > LuaU (lz4 Library)]]
 
 print("ToraWa Noya was here")
 
-game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-gh 108535082971714 17676020756 17676020756 17676020756 17676020756 17676020756 17676020756"}))
-wait(3)
-game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-net"}))
+local h = game:GetService("ReplicatedStorage")["01_server"]
+if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then h:FireServer("cmd","-r6") task.wait(1.5) end
+h:FireServer("cmd","-gh 108535082971714 17676020756 17676020756 17676020756 17676020756 17676020756 17676020756")
+task.wait(3)
+h:FireServer("cmd","-net")
 
 local Vector3_101 = Vector3.new(1, 0, 1)
 local netless_Y = Vector3.new(0, 25.1, 0)
