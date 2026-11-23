@@ -1017,7 +1017,7 @@ kan.Volume = 1.25
 kan.TimePosition = 0
 kan.PlaybackSpeed = 1
 kan.Pitch = 1
-kan.SoundId = "rbxassetid://614032233"
+kan.SoundId = "rbxassetid://92583094543115"
 kan.Name = "wrecked"
 kan.Looped = true
 kan:Play()
@@ -1721,8 +1721,6 @@ CreateWeld(wed,rwing6,wed,0,-0.25,1.75,math.rad(0),math.rad(90),math.rad(90),0,0
 wed = CreateParta(extrawingmod2,0,0,"Neon",halocolor)
 CreateMesh(wed,"Wedge",0.05,3,0.5)
 CreateWeld(wed,rwing6,wed,0,-1.75,0.25,math.rad(90),math.rad(90),math.rad(90),0,0,0,math.rad(0),math.rad(0),math.rad(0))
--- Star Glitcher accessory wing/halo replacement.
--- The reanimation clone (outside `model`) drives the visible original character parts.
 local ModeOfGlitch
 local wingAnchors = {lwing1, lwing2, lwing3, rwing1, rwing2, rwing3}
 local wingAccessoryHandles = {}
@@ -1772,8 +1770,6 @@ local function makeAccessoryWeld(part0, part1, offset)
     return weld
 end
 
--- Search the reanimation clone, not the visible original model, so its
--- existing alignment continues to carry each accessory into view.
 for _, part in ipairs(char:GetDescendants()) do
     if part:IsA("BasePart") and (not model or not part:IsDescendantOf(model)) then
         local meshId, textureId = getAccessoryMeshIds(part)
@@ -1810,14 +1806,13 @@ end
 
 local lastWingModeIsMayhem = nil
 local function updateAccessoryWingMode()
-    local mayhemMode = (ModeOfGlitch == 1)
+    local mayhemMode = (ModeOfGlitch == 1 or ModeOfGlitch == 2 or ModeOfGlitch == 3)
     if lastWingModeIsMayhem == mayhemMode then
         return
     end
 
     for i, wingWeld in ipairs(wingAccessoryWelds) do
         if i <= 3 and mayhemMode then
-            -- Mayhem keeps the right-side trio visible; park the left trio 100 studs below.
             wingWeld.Part0 = root
             wingWeld.C0 = CFrame.new(0, -100, 0)
         else
@@ -1831,7 +1826,6 @@ local function updateAccessoryWingMode()
 end
 
 local function hideProceduralMainWingMeshes()
-    -- Keep trails and separate extra-wing effects; hide only the old main wing/halo geometry.
     for _, wingModel in ipairs({mw1, mw2}) do
         for _, item in ipairs(wingModel:GetDescendants()) do
             if item:IsA("BasePart") then
@@ -5475,7 +5469,7 @@ end
 hum.WalkSpeed = storehumanoidWS
 attack = false
 end))
-newTheme("rbxassetid://614032233",48.6,1,1.25)
+newTheme("rbxassetid://92583094543115",48.6,1,1.25)
 end
 function attackone()
 	attack = true
