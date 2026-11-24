@@ -31,41 +31,22 @@ if not isfolder(XilusFolder) then
     makefolder(XilusFolder)
 end
 
-local XilusDownloads = {}
-local XilusTotalSize = 0
-
-for _, themeName in ipairs(XilusThemes) do
+for index, themeName in ipairs(XilusThemes) do
     local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
     if not isfile(filePath) then
         local success, audioData = pcall(function()
             return game:HttpGet(XilusBaseUrl .. themeName .. ".mp3")
         end)
         if success and audioData and #audioData > 0 then
-            table.insert(XilusDownloads, {path = filePath, name = themeName, data = audioData})
-            XilusTotalSize = XilusTotalSize + #audioData
+            writefile(filePath, audioData)
+            pcall(function()
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Downloaded asset",
+                    Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
+                    Duration = 5
+                })
+            end)
         end
-    end
-end
-
-if #XilusDownloads > 0 then
-    local XilusChoice = Instance.new("BindableEvent")
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Download Assets?",
-        Text = string.format("~%.2fMB", XilusTotalSize / 1048576),
-        Button1 = "Yes",
-        Button2 = "No",
-        Duration = 30,
-        Callback = function(button)
-            XilusChoice:Fire(button)
-        end
-    })
-    local choice = XilusChoice.Event:Wait()
-    XilusChoice:Destroy()
-    if choice ~= "Yes" then
-        return
-    end
-    for _, asset in ipairs(XilusDownloads) do
-        writefile(asset.path, asset.data)
     end
 end
 
