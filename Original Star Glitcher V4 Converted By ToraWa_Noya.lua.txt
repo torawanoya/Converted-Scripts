@@ -20,7 +20,7 @@ local function XilusNotify(title, description)
 end
 
 if game.PlaceId ~= 123974602339071 then
-    XilusNotify("Not supported game", "This script only work in Just A Baseplate")
+    XilusNotify("Not supported game", "This script only work in Just a Baseplate")
     return
 end
 
@@ -82,62 +82,59 @@ end
 
 for index, themeName in ipairs(XilusThemes) do
     local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
-    if not isfile(filePath) then
+    local checkSuccess, fileReady = pcall(function()
+        if not isfile(filePath) then
+            return false
+        end
+        local savedData = readfile(filePath)
+        return savedData ~= nil and #savedData > 0
+    end)
+    if not checkSuccess or not fileReady then
         local success, audioData = pcall(function()
             return game:HttpGet(XilusBaseUrl .. themeName .. ".mp3")
         end)
         if success and audioData and #audioData > 0 then
-            pcall(function()
+            local writeSuccess = pcall(function()
                 writefile(filePath, audioData)
             end)
-            if isfile(filePath) then
-                pcall(function()
-                    game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "Downloaded asset",
-                        Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
-                        Duration = 5
-                    })
+            if writeSuccess then
+                local verifySuccess, savedData = pcall(function()
+                    return readfile(filePath)
                 end)
+                if verifySuccess and savedData and #savedData > 0 then
+                    pcall(function()
+                        game:GetService("StarterGui"):SetCore("SendNotification", {
+                            Title = "Downloaded asset",
+                            Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
+                            Duration = 5
+                        })
+                    end)
+                end
             end
         end
     end
 end
 
-local XilusMissingFiles = {}
-for _, themeName in ipairs(XilusThemes) do
-    local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
-    local success, audioData = pcall(function()
-        if not isfile(filePath) then
-            return nil
-        end
-        return readfile(filePath)
-    end)
-    if not success or not audioData or #audioData == 0 then
-        table.insert(XilusMissingFiles, themeName .. ".mp3")
-    end
-end
-
-if #XilusMissingFiles > 0 then
-    pcall(function()
-        game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-rs"}))
-    end)
-    XilusNotify("Something went wrong", "Can't find " .. table.concat(XilusMissingFiles, ", "))
-    return
-end
-
 local function getXilusTheme(themeName)
     local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
-    local audioData = readfile(filePath)
-    if not audioData or #audioData == 0 then
-        error("Missing audio file: " .. filePath)
+    local readSuccess, audioData = pcall(function()
+        return readfile(filePath)
+    end)
+    if not readSuccess or not audioData or #audioData == 0 then
+        return nil
     end
     local assetFunction = getcustomasset or getsynasset
     if not assetFunction then
-        error("Custom asset function is unavailable")
+        return nil
     end
-    return assetFunction(filePath)
+    local assetSuccess, assetId = pcall(function()
+        return assetFunction(filePath)
+    end)
+    if assetSuccess then
+        return assetId
+    end
+    return nil
 end
-
 print("ToraWa Noya was here [[DO NOT REUP]]")
 
 if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
@@ -7322,7 +7319,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("???",BrickColor.new("Dark indigo").Color,BrickColor.new("Royal purple").Color,"Fantasy")
-newThemeCust("rbxassetid://398455752",0,1,2.05)
+
 MAINRUINCOLOR = BrickColor.new("Dark indigo")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -7385,7 +7382,7 @@ tl2.Enabled = true
 tl3.Enabled = true
 chatfunc("Theres no hope for me...",Color3.new(0.35,0,0),"Inverted","Antique",1)
 RecolorTextAndRename("???",Color3.new(0,0,0),Color3.new(0.35,0,0),"Code")
-newThemeCust("rbxassetid://1764195391",0,1,2)
+
 MAINRUINCOLOR = BrickColor.new("Crimson")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
