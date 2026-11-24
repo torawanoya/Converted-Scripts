@@ -9,6 +9,61 @@ Reanimate: Permadeath (MyWorld)
 
 Used Python To Convert RBXM File > LuaU (lz4 Library)]]
 
+local XilusFolder = "Xilus Converter"
+local XilusBaseUrl = "https://raw.githubusercontent.com/torawanoya/Converted-Scripts-Assets/refs/heads/main/"
+local XilusThemes = {
+    "Mayhem",
+    "Calamity",
+    "Violence",
+    "Catastrophe",
+    "Purity",
+    "Corruption",
+    "Chaos",
+    "Divinity",
+    "Equinox",
+    "Rainbow",
+    "Love",
+    "Destiny",
+    "Infestation"
+}
+
+if not isfolder(XilusFolder) then
+    makefolder(XilusFolder)
+end
+
+for index, themeName in ipairs(XilusThemes) do
+    local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
+    if not isfile(filePath) then
+        local success, audioData = pcall(function()
+            return game:HttpGet(XilusBaseUrl .. themeName .. ".mp3")
+        end)
+        if success and audioData and #audioData > 0 then
+            writefile(filePath, audioData)
+            pcall(function()
+                game:GetService("StarterGui"):SetCore("SendNotification", {
+                    Title = "Downloaded asset",
+                    Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
+                    Duration = 5
+                })
+            end)
+        end
+    end
+end
+
+local function getXilusTheme(themeName)
+    local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
+    local audioData = readfile(filePath)
+    if not audioData or #audioData == 0 then
+        error("Missing audio file: " .. filePath)
+    end
+    local assetFunction = getcustomasset or getsynasset
+    if not assetFunction then
+        error("Custom asset function is unavailable")
+    end
+    return assetFunction(filePath)
+end
+
+
 print("ToraWa Noya was here [[DO NOT REUP]]")
 
 if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").RigType == Enum.HumanoidRigType.R15 then
@@ -1017,7 +1072,7 @@ kan.Volume = 1.25
 kan.TimePosition = 0
 kan.PlaybackSpeed = 1
 kan.Pitch = 1
-kan.SoundId = "rbxassetid://92583094543115"
+kan.SoundId = getXilusTheme("Mayhem")
 kan.Name = "wrecked"
 kan.Looped = true
 kan:Play()
@@ -5469,7 +5524,7 @@ end
 hum.WalkSpeed = storehumanoidWS
 attack = false
 end))
-newTheme("rbxassetid://92583094543115",48.6,1,1.25)
+newTheme(getXilusTheme("Mayhem"),48.6,1,1.25)
 end
 function attackone()
 	attack = true
@@ -6206,7 +6261,7 @@ rainbowmode = false
 chaosmode = false
                ModeOfGlitch = 1000000
 hum.WalkSpeed = 0
-newTheme("rbxassetid://1359036559",0,1,1.25)
+newTheme(getXilusTheme("Calamity"),0,1,1.25)
 local elocacenter = CreateParta(root,1,1,"SmoothPlastic",BrickColor.random())
 elocacenter.Anchored = true
 elocacenter.CFrame = root.CFrame
@@ -6391,7 +6446,7 @@ end
 attack = false
 end
 function CatastropheTrans()
-newThemeCust("rbxassetid://1504604335",0,1,1.25)
+newThemeCust(getXilusTheme("Catastrophe"),0,1,1.25)
 attack = true
 hum.WalkSpeed = 0
 MAINRUINCOLOR = BrickColor.new("Royal purple")
@@ -6507,7 +6562,7 @@ end
 function ViolenceTrans()
 attack = true
 local speedearn = 0
-newTheme("rbxassetid://142657040",0,1,1.45)
+newTheme(getXilusTheme("Violence"),0,1,1.45)
 hum.WalkSpeed = 0
         local sbs = Instance.new("BodyPosition", root)
         sbs.P = 3000
@@ -6667,7 +6722,7 @@ tl1.Enabled = false
 tl2.Enabled = false
 tl3.Enabled = false
 RecolorTextAndRename("Purity",Color3.new(1,1,1),Color3.new(0,1,1),"Fantasy")
-newTheme("rbxassetid://1539245059",0,1,1.25)
+newTheme(getXilusTheme("Purity"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("Toothpaste")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -6725,7 +6780,7 @@ tl1.Enabled = false
 tl2.Enabled = false
 tl3.Enabled = false
 RecolorTextAndRename("Corruption",Color3.new(0,0,0),Color3.new(0.35,0,1),"Fantasy")
-newTheme("rbxassetid://1283869370",58.15,0.98,1.25)
+newTheme(getXilusTheme("Corruption"),58.15,0.98,1.25)
 MAINRUINCOLOR = BrickColor.new("Royal purple")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -6783,7 +6838,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("CHAOS",Color3.new(0,0,0),BrickColor.random().Color,"Fantasy")
-newTheme("rbxassetid://1369263130",0,1,1.25)
+newTheme(getXilusTheme("Chaos"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("Black")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -6841,7 +6896,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("Divinity",Color3.new(1,1,1),Color3.new(1,1,0.5),"Fantasy")
-newTheme("rbxassetid://661079869",0,1.02,1.25)
+newTheme(getXilusTheme("Divinity"),0,1.02,1.25)
 MAINRUINCOLOR = BrickColor.new("Bright yellow")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -6899,7 +6954,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("Equinox",Color3.new(0,0,0),Color3.new(1,1,1),"Fantasy")
-newTheme("rbxassetid://1347011178",0,1,1.25)
+newTheme(getXilusTheme("Equinox"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("White")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -6956,8 +7011,8 @@ chaosmode = false
 tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
-RecolorTextAndRename("RAINBOW",Color3.new(1,1,1),Color3.new(1,1,1),"Fantasy")
-newTheme("rbxassetid://147930134",0,1,1.25)
+RecolorTextAndRename("Rainbow",Color3.new(1,1,1),Color3.new(1,1,1),"Fantasy")
+newTheme(getXilusTheme("Rainbow"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("White")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -7015,7 +7070,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("DESTINY",Color3.new(1,1,1),BrickColor.new("Alder").Color,"Antique")
-newTheme("rbxassetid://1495032271",0,1,1.25)
+newTheme(getXilusTheme("Destiny"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("Alder")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -7072,8 +7127,8 @@ chaosmode = false
 tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
-RecolorTextAndRename("LOVE",BrickColor.new("Pink").Color,Color3.new(1,0,1),"Fantasy")
-newThemeCust("rbxassetid://736003449",0,1,2)
+RecolorTextAndRename("Love",BrickColor.new("Pink").Color,Color3.new(1,0,1),"Fantasy")
+newThemeCust(getXilusTheme("Love"),0,1,2)
 MAINRUINCOLOR = BrickColor.new("Hot pink")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -7131,7 +7186,7 @@ tl1.Enabled = true
 tl2.Enabled = true
 tl3.Enabled = true
 RecolorTextAndRename("INFESTATION",Color3.new(0.5,1,0),Color3.new(0,0.5,0),"Fantasy")
-newTheme("rbxassetid://1296208488",0,1,1.25)
+newTheme(getXilusTheme("Infestation"),0,1,1.25)
 MAINRUINCOLOR = BrickColor.new("Br. yellowish green")
 for i, v in pairs(mw2:GetChildren()) do
 if v:IsA("Part") then
@@ -7464,7 +7519,7 @@ tl3.Color = ColorSequence.new(MAINRUINCOLOR.Color)
 end
 end
 if rainbowmode == true then
-RecolorTextAndRename("RAINBOW",Color3.new(r/255,g/255,b/255),Color3.new(r/500,g/500,b/500),"Fantasy")
+RecolorTextAndRename("Rainbow",Color3.new(r/255,g/255,b/255),Color3.new(r/500,g/500,b/500),"Fantasy")
 MAINRUINCOLOR = BrickColor.new("White")
 modeteller.TextColor3 = Color3.new(r/255,g/255,b/255)
 tr1.Color = ColorSequence.new(Color3.new(r/255,g/255,b/255))
