@@ -9,6 +9,48 @@ Reanimate: Permadeath (MyWorld)
 
 Used Python To Convert RBXM File > LuaU (lz4 Library)]]
 
+local function XilusNotify(title, description)
+    pcall(function()
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = title,
+            Text = description,
+            Duration = 6
+        })
+    end)
+end
+
+if game.PlaceId ~= 123974602339071 then
+    XilusNotify("Not supported game", "This script only work in Just A Baseplate")
+    return
+end
+
+local XilusMissingFunctions = {}
+local XilusRequiredFunctions = {
+    {"isfolder", isfolder},
+    {"makefolder", makefolder},
+    {"isfile", isfile},
+    {"writefile", writefile},
+    {"readfile", readfile}
+}
+
+for _, requirement in ipairs(XilusRequiredFunctions) do
+    if type(requirement[2]) ~= "function" then
+        table.insert(XilusMissingFunctions, requirement[1])
+    end
+end
+
+if type(getcustomasset) ~= "function" and type(getsynasset) ~= "function" then
+    table.insert(XilusMissingFunctions, "getcustomasset/getsynasset")
+end
+
+if #XilusMissingFunctions > 0 then
+    XilusNotify(
+        "Badass executor",
+        "Your executor can't even run this script (missing function: " .. table.concat(XilusMissingFunctions, ", ") .. ")"
+    )
+    return
+end
+
 local XilusFolder = "Xilus Converter"
 local XilusBaseUrl = "https://raw.githubusercontent.com/torawanoya/Converted-Scripts-Assets/refs/heads/main/"
 local XilusThemes = {
@@ -27,8 +69,15 @@ local XilusThemes = {
     "Infestation"
 }
 
-if not isfolder(XilusFolder) then
-    makefolder(XilusFolder)
+local XilusFolderReady = pcall(function()
+    if not isfolder(XilusFolder) then
+        makefolder(XilusFolder)
+    end
+end)
+
+if not XilusFolderReady then
+    XilusNotify("Badass executor", "Your executor can't even run this script (missing function: isfolder, makefolder)")
+    return
 end
 
 for index, themeName in ipairs(XilusThemes) do
@@ -38,16 +87,42 @@ for index, themeName in ipairs(XilusThemes) do
             return game:HttpGet(XilusBaseUrl .. themeName .. ".mp3")
         end)
         if success and audioData and #audioData > 0 then
-            writefile(filePath, audioData)
             pcall(function()
-                game:GetService("StarterGui"):SetCore("SendNotification", {
-                    Title = "Downloaded asset",
-                    Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
-                    Duration = 5
-                })
+                writefile(filePath, audioData)
             end)
+            if isfile(filePath) then
+                pcall(function()
+                    game:GetService("StarterGui"):SetCore("SendNotification", {
+                        Title = "Downloaded asset",
+                        Text = string.format("%s.mp3 (%d/%d) - %.2fMB", themeName, index, #XilusThemes, #audioData / 1048576),
+                        Duration = 5
+                    })
+                end)
+            end
         end
     end
+end
+
+local XilusMissingFiles = {}
+for _, themeName in ipairs(XilusThemes) do
+    local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
+    local success, audioData = pcall(function()
+        if not isfile(filePath) then
+            return nil
+        end
+        return readfile(filePath)
+    end)
+    if not success or not audioData or #audioData == 0 then
+        table.insert(XilusMissingFiles, themeName .. ".mp3")
+    end
+end
+
+if #XilusMissingFiles > 0 then
+    pcall(function()
+        game:GetService("ReplicatedStorage")["01_server"]:FireServer(table.unpack({[1]="cmd",[2]="-rs"}))
+    end)
+    XilusNotify("Something went wrong", "Can't find " .. table.concat(XilusMissingFiles, ", "))
+    return
 end
 
 local function getXilusTheme(themeName)
@@ -62,7 +137,6 @@ local function getXilusTheme(themeName)
     end
     return assetFunction(filePath)
 end
-
 
 print("ToraWa Noya was here [[DO NOT REUP]]")
 
