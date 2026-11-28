@@ -115,6 +115,11 @@ for index, themeName in ipairs(XilusThemes) do
     end
 end
 
+XilusNotify("Thanks For Using", "Copied Discord Server Link (join plz)\nhttps://discord.gg/2QQg2QRxbx")
+pcall(function()
+    setclipboard("https://discord.gg/2QQg2QRxbx")
+end)
+
 local function getXilusTheme(themeName)
     local filePath = XilusFolder .. "/" .. themeName .. ".mp3"
     local readSuccess, audioData = pcall(function()
